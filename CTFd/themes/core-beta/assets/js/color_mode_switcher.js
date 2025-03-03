@@ -1,16 +1,11 @@
 "use strict";
 
 /**
- * Get user preferred theme from their past choice or browser
- * @returns {String} User preferred theme
+ * Get user preferred theme (forced to dark)
+ * @returns {String} Always "dark"
  */
 function getPreferredTheme() {
-  const storedTheme = localStorage.getItem("theme");
-  if (storedTheme) {
-    return storedTheme;
-  }
-  // Firefox with 'resistFingerprint' activated always returns light
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "dark"; // Force dark mode
 }
 
 /**
@@ -18,33 +13,15 @@ function getPreferredTheme() {
  * @param {String} theme - 'dark' or 'light'
  */
 function showActiveTheme(theme) {
-  const activeThemeIcon = document.querySelector(".theme-switch i.fas");
-  activeThemeIcon.classList.toggle("fa-moon", theme === "dark");
-  activeThemeIcon.classList.toggle("fa-sun", theme !== "dark");
+  // Remove or do nothing since we are forcing dark mode
 }
 
 // Change body theme early to prevent flash
-let currentTheme = getPreferredTheme();
-document.documentElement.setAttribute("data-bs-theme", currentTheme);
+document.documentElement.setAttribute("data-bs-theme", "dark");
 
-// On browser color-scheme change, update
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-  currentTheme = getPreferredTheme();
-  document.documentElement.setAttribute("data-bs-theme", currentTheme);
-  showActiveTheme(currentTheme);
-});
-
+// Remove event listener for browser color scheme changes
 window.addEventListener("load", () => {
-  showActiveTheme(currentTheme);
-
-  // On button click, switch
-  document.querySelectorAll(".theme-switch").forEach(e => {
-    e.addEventListener("click", ev => {
-      currentTheme = currentTheme === "light" ? "dark" : "light";
-      document.documentElement.setAttribute("data-bs-theme", currentTheme);
-      localStorage.setItem("theme", currentTheme);
-      showActiveTheme(currentTheme);
-      ev.preventDefault();
-    });
-  });
+  // Remove theme switch buttons
+  document.querySelectorAll(".theme-switch").forEach(e => e.remove());
 });
+
